@@ -17,16 +17,154 @@ This is an R Markdown format used for publishing markdown documents to GitHub. W
 
 cm <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/college-majors/recent-grads.csv")
 head(cm)
-data(cm)
+data("cm")
+
+library(dplyr)
+library(ggplot2)
+```
+
+```{r}
+cm <- cm %>%
+  filter(!is.na(Total), Total > 0)
+
+cm <- cm %>%
+  mutate(
+    ShareMen = Men / Total,
+    EmploymentRate = Employed / Total,
+    UnemploymentRate = Unemployed / (Employed + Unemployed)
+  )
+
+head(cm)
+```
+
+## Questions
+
+What major category has the highest percentage of full time employment after graduation?
+
+Do major categories with higher percentages of women have higher employment rates?
+
+What type of engineering should I go into to be employed full time while also utilizing my college degree?
+
+## Results
+
+What major category has the highest percentage of full time employment after graduation?
+
+```{r}
+cm <- cm %>%
+  mutate(FullTimeShare = Full_time / Employed)
+
+cm <- cm %>%
+  filter(!is.na(FullTimeShare), Employed > 0)
+
+category_summary <- cm %>%
+  group_by(Major_category) %>%
+  summarize(AvgFullTimeShare = mean(FullTimeShare, na.rm = TRUE)) %>%
+  arrange(desc(AvgFullTimeShare))
+
+ggplot(category_summary, aes(x = reorder(Major_category, AvgFullTimeShare), y = AvgFullTimeShare, fill = Major_category)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "Average Full-Time Employment Share by Major Category",
+    x = "Major Category",
+    y = "Average Full-Time Employment Share"
+  ) +
+  scale_y_continuous(labels = scales::percent_format())
+
+ggplot(cm, aes(x = reorder(Major, FullTimeShare), y = FullTimeShare)) +
+  geom_col(fill = "steelblue") +
+  facet_wrap(~ Major_category, scales = "free_y") +
+  labs(
+    title = "Full-Time Employment Share by Major (Faceted by Major Category)",
+    x = "Major",
+    y = "Full-Time Employment Share"
+  ) +
+  scale_y_continuous(labels = scales::percent_format())
+
+ggplot(cm, aes(x = reorder(Major, FullTimeShare), y = FullTimeShare, color = Major_category)) +
+  geom_col() +
+  labs(
+    title = "Full-Time Employment Share by Major",
+    x = "Major",
+    y = "Full-Time Employment Share"
+  ) +
+  scale_y_continuous(labels = scales::percent_format())
 
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+
+Do major categories with higher percentages of women have higher employment rates?
+
+```{r}
+
+cm <- cm %>%
+  filter(Total > 0) %>%
+  mutate(
+    ShareWomen = Women / Total,
+    EmploymentRate = Employed / Total
+  )
+
+# Aggregate by major category
+category_summary <- cm %>%
+  group_by(Major_category) %>%
+  summarize(
+    AvgShareWomen = mean(ShareWomen, na.rm = TRUE),
+    AvgEmploymentRate = mean(EmploymentRate, na.rm = TRUE)
+  )
+
+# Plot: Share of Women vs Employment Rate
+ggplot(category_summary, aes(x = AvgShareWomen, y = AvgEmploymentRate, label = Major_category)) +
+  geom_point(, size = 4) +
+  geom_text(nudge_y = 0.01, size = 3) +
+  labs(
+    title = "Women and Employment Rates", 
+    x = "Average % Women (per Category)",
+    y = "Average Employment Rate"
+  ) +
+  scale_x_continuous(labels = scales::percent_format()) +
+  scale_y_continuous(labels = scales::percent_format())
+
+ggplot(cm, aes(x = ShareWomen, y = EmploymentRate)) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Employment Rate vs Share of Women", x = "Share of Women", y = "Employment Rate") +
+  scale_x_continuous(labels = scales::percent_format()) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  theme_minimal()
+
+library(scales)
+
+ggplot(cm, aes(x = ShareWomen, y = Median, color = Major_category)) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Median Salary vs Share of Women by Major", x = "Share of Women", y = "Median Salary") +
+  scale_x_continuous(labels = scales::percent_format()) + 
+  scale_y_continuous(labels = label_dollar(scale = 0.001, suffix = "K")) + 
+  theme(legend.position = "bottom")
+
+#Pie Chart
+women_by_category <- cm %>%
+  group_by(Major_category) %>%
+  summarize(TotalWomen = sum(Women, na.rm = TRUE)) %>%
+  mutate(Percent = TotalWomen / sum(TotalWomen)) %>%
+  arrange(desc(Percent)) %>%
+  mutate(label_pos = cumsum(Percent) - Percent / 2)
+
+women_by_category
+# Plot as pie chart
+
+ggplot(women_by_category, aes(x = "", y = TotalWomen, fill = Major_category)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar(theta = "y") +
+  labs(
+    title = "Distribution of Women by Major Category",
+    x = NULL,
+    y = NULL,
+    fill = "Major Category"
+  ) +
+  theme_void() +
+  theme(legend.position = "right")
+
 ```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

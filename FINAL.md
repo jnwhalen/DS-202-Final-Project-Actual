@@ -7,27 +7,295 @@ This is an R Markdown format used for publishing markdown documents to
 GitHub. When you click the **Knit** button all R code chunks are run and
 a markdown file (.md) suitable for publishing to GitHub is generated.
 
-## Including Code
-
-You can include R code in the document as follows:
+## Accessing Data
 
 ``` r
-summary(cars)
+cm <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/college-majors/recent-grads.csv")
+head(cm)
 ```
 
-    ##      speed           dist       
-    ##  Min.   : 4.0   Min.   :  2.00  
-    ##  1st Qu.:12.0   1st Qu.: 26.00  
-    ##  Median :15.0   Median : 36.00  
-    ##  Mean   :15.4   Mean   : 42.98  
-    ##  3rd Qu.:19.0   3rd Qu.: 56.00  
-    ##  Max.   :25.0   Max.   :120.00
+    ##   Rank Major_code                                     Major Total   Men Women
+    ## 1    1       2419                     PETROLEUM ENGINEERING  2339  2057   282
+    ## 2    2       2416            MINING AND MINERAL ENGINEERING   756   679    77
+    ## 3    3       2415                 METALLURGICAL ENGINEERING   856   725   131
+    ## 4    4       2417 NAVAL ARCHITECTURE AND MARINE ENGINEERING  1258  1123   135
+    ## 5    5       2405                      CHEMICAL ENGINEERING 32260 21239 11021
+    ## 6    6       2418                       NUCLEAR ENGINEERING  2573  2200   373
+    ##   Major_category ShareWomen Sample_size Employed Full_time Part_time
+    ## 1    Engineering  0.1205643          36     1976      1849       270
+    ## 2    Engineering  0.1018519           7      640       556       170
+    ## 3    Engineering  0.1530374           3      648       558       133
+    ## 4    Engineering  0.1073132          16      758      1069       150
+    ## 5    Engineering  0.3416305         289    25694     23170      5180
+    ## 6    Engineering  0.1449670          17     1857      2038       264
+    ##   Full_time_year_round Unemployed Unemployment_rate Median P25th  P75th
+    ## 1                 1207         37        0.01838053 110000 95000 125000
+    ## 2                  388         85        0.11724138  75000 55000  90000
+    ## 3                  340         16        0.02409639  73000 50000 105000
+    ## 4                  692         40        0.05012531  70000 43000  80000
+    ## 5                16697       1672        0.06109771  65000 50000  75000
+    ## 6                 1449        400        0.17722641  65000 50000 102000
+    ##   College_jobs Non_college_jobs Low_wage_jobs
+    ## 1         1534              364           193
+    ## 2          350              257            50
+    ## 3          456              176             0
+    ## 4          529              102             0
+    ## 5        18314             4440           972
+    ## 6         1142              657           244
 
-## Including Plots
+``` r
+data("cm")
+```
 
-You can also embed plots, for example:
+    ## Warning in data("cm"): data set 'cm' not found
 
-![](FINAL_files/figure-gfm/pressure-1.png)<!-- -->
+``` r
+library(dplyr)
+```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to
-prevent printing of the R code that generated the plot.
+    ## 
+    ## Attaching package: 'dplyr'
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     filter, lag
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, setequal, union
+
+``` r
+library(ggplot2)
+```
+
+``` r
+cm <- cm %>%
+  filter(!is.na(Total), Total > 0)
+
+cm <- cm %>%
+  mutate(
+    ShareMen = Men / Total,
+    EmploymentRate = Employed / Total,
+    UnemploymentRate = Unemployed / (Employed + Unemployed)
+  )
+
+head(cm)
+```
+
+    ##   Rank Major_code                                     Major Total   Men Women
+    ## 1    1       2419                     PETROLEUM ENGINEERING  2339  2057   282
+    ## 2    2       2416            MINING AND MINERAL ENGINEERING   756   679    77
+    ## 3    3       2415                 METALLURGICAL ENGINEERING   856   725   131
+    ## 4    4       2417 NAVAL ARCHITECTURE AND MARINE ENGINEERING  1258  1123   135
+    ## 5    5       2405                      CHEMICAL ENGINEERING 32260 21239 11021
+    ## 6    6       2418                       NUCLEAR ENGINEERING  2573  2200   373
+    ##   Major_category ShareWomen Sample_size Employed Full_time Part_time
+    ## 1    Engineering  0.1205643          36     1976      1849       270
+    ## 2    Engineering  0.1018519           7      640       556       170
+    ## 3    Engineering  0.1530374           3      648       558       133
+    ## 4    Engineering  0.1073132          16      758      1069       150
+    ## 5    Engineering  0.3416305         289    25694     23170      5180
+    ## 6    Engineering  0.1449670          17     1857      2038       264
+    ##   Full_time_year_round Unemployed Unemployment_rate Median P25th  P75th
+    ## 1                 1207         37        0.01838053 110000 95000 125000
+    ## 2                  388         85        0.11724138  75000 55000  90000
+    ## 3                  340         16        0.02409639  73000 50000 105000
+    ## 4                  692         40        0.05012531  70000 43000  80000
+    ## 5                16697       1672        0.06109771  65000 50000  75000
+    ## 6                 1449        400        0.17722641  65000 50000 102000
+    ##   College_jobs Non_college_jobs Low_wage_jobs  ShareMen EmploymentRate
+    ## 1         1534              364           193 0.8794357      0.8448055
+    ## 2          350              257            50 0.8981481      0.8465608
+    ## 3          456              176             0 0.8469626      0.7570093
+    ## 4          529              102             0 0.8926868      0.6025437
+    ## 5        18314             4440           972 0.6583695      0.7964662
+    ## 6         1142              657           244 0.8550330      0.7217256
+    ##   UnemploymentRate
+    ## 1       0.01838053
+    ## 2       0.11724138
+    ## 3       0.02409639
+    ## 4       0.05012531
+    ## 5       0.06109771
+    ## 6       0.17722641
+
+## Questions
+
+What major category has the highest percentage of full time employment
+after graduation?
+
+Do major categories with higher percentages of women have higher
+employment rates?
+
+What type of engineering should I go into to be employed full time while
+also utilizing my college degree?
+
+## Results
+
+What major category has the highest percentage of full time employment
+after graduation?
+
+``` r
+cm <- cm %>%
+  mutate(FullTimeShare = Full_time / Employed)
+
+cm <- cm %>%
+  filter(!is.na(FullTimeShare), Employed > 0)
+
+category_summary <- cm %>%
+  group_by(Major_category) %>%
+  summarize(AvgFullTimeShare = mean(FullTimeShare, na.rm = TRUE)) %>%
+  arrange(desc(AvgFullTimeShare))
+
+ggplot(category_summary, aes(x = reorder(Major_category, AvgFullTimeShare), y = AvgFullTimeShare, fill = Major_category)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "Average Full-Time Employment Share by Major Category",
+    x = "Major Category",
+    y = "Average Full-Time Employment Share"
+  ) +
+  scale_y_continuous(labels = scales::percent_format())
+```
+
+![](FINAL_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+
+``` r
+ggplot(cm, aes(x = reorder(Major, FullTimeShare), y = FullTimeShare)) +
+  geom_col(fill = "steelblue") +
+  facet_wrap(~ Major_category, scales = "free_y") +
+  labs(
+    title = "Full-Time Employment Share by Major (Faceted by Major Category)",
+    x = "Major",
+    y = "Full-Time Employment Share"
+  ) +
+  scale_y_continuous(labels = scales::percent_format())
+```
+
+![](FINAL_files/figure-gfm/unnamed-chunk-2-2.png)<!-- -->
+
+``` r
+ggplot(cm, aes(x = reorder(Major, FullTimeShare), y = FullTimeShare, color = Major_category)) +
+  geom_col() +
+  labs(
+    title = "Full-Time Employment Share by Major",
+    x = "Major",
+    y = "Full-Time Employment Share"
+  ) +
+  scale_y_continuous(labels = scales::percent_format())
+```
+
+![](FINAL_files/figure-gfm/unnamed-chunk-2-3.png)<!-- -->
+
+Do major categories with higher percentages of women have higher
+employment rates?
+
+``` r
+cm <- cm %>%
+  filter(Total > 0) %>%
+  mutate(
+    ShareWomen = Women / Total,
+    EmploymentRate = Employed / Total
+  )
+
+# Aggregate by major category
+category_summary <- cm %>%
+  group_by(Major_category) %>%
+  summarize(
+    AvgShareWomen = mean(ShareWomen, na.rm = TRUE),
+    AvgEmploymentRate = mean(EmploymentRate, na.rm = TRUE)
+  )
+
+# Plot: Share of Women vs Employment Rate
+ggplot(category_summary, aes(x = AvgShareWomen, y = AvgEmploymentRate, label = Major_category)) +
+  geom_point(, size = 4) +
+  geom_text(nudge_y = 0.01, size = 3) +
+  labs(
+    title = "Women and Employment Rates", 
+    x = "Average % Women (per Category)",
+    y = "Average Employment Rate"
+  ) +
+  scale_x_continuous(labels = scales::percent_format()) +
+  scale_y_continuous(labels = scales::percent_format())
+```
+
+![](FINAL_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+``` r
+ggplot(cm, aes(x = ShareWomen, y = EmploymentRate)) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Employment Rate vs Share of Women", x = "Share of Women", y = "Employment Rate") +
+  scale_x_continuous(labels = scales::percent_format()) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  theme_minimal()
+```
+
+    ## `geom_smooth()` using formula = 'y ~ x'
+
+![](FINAL_files/figure-gfm/unnamed-chunk-3-2.png)<!-- -->
+
+``` r
+library(scales)
+
+ggplot(cm, aes(x = ShareWomen, y = Median, color = Major_category)) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Median Salary vs Share of Women by Major", x = "Share of Women", y = "Median Salary") +
+  scale_x_continuous(labels = scales::percent_format()) + 
+  scale_y_continuous(labels = label_dollar(scale = 0.001, suffix = "K")) + 
+  theme(legend.position = "bottom")
+```
+
+    ## `geom_smooth()` using formula = 'y ~ x'
+
+![](FINAL_files/figure-gfm/unnamed-chunk-3-3.png)<!-- -->
+
+``` r
+#Pie Chart
+women_by_category <- cm %>%
+  group_by(Major_category) %>%
+  summarize(TotalWomen = sum(Women, na.rm = TRUE)) %>%
+  mutate(Percent = TotalWomen / sum(TotalWomen)) %>%
+  arrange(desc(Percent)) %>%
+  mutate(label_pos = cumsum(Percent) - Percent / 2)
+
+women_by_category
+```
+
+    ## # A tibble: 16 × 4
+    ##    Major_category                      TotalWomen Percent label_pos
+    ##    <chr>                                    <int>   <dbl>     <dbl>
+    ##  1 Business                                634524 0.163      0.0814
+    ##  2 Education                               455603 0.117      0.221 
+    ##  3 Humanities & Liberal Arts               440622 0.113      0.336 
+    ##  4 Health                                  387713 0.0995     0.443 
+    ##  5 Psychology & Social Work                382892 0.0983     0.542 
+    ##  6 Social Science                          273132 0.0701     0.626 
+    ##  7 Biology & Life Science                  268943 0.0690     0.695 
+    ##  8 Communications & Journalism             260680 0.0669     0.763 
+    ##  9 Arts                                    222740 0.0572     0.825 
+    ## 10 Engineering                             129276 0.0332     0.871 
+    ## 11 Industrial Arts & Consumer Services     126011 0.0324     0.903 
+    ## 12 Computers & Mathematics                  90283 0.0232     0.931 
+    ## 13 Physical Sciences                        90089 0.0231     0.954 
+    ## 14 Law & Public Policy                      87978 0.0226     0.977 
+    ## 15 Agriculture & Natural Resources          35263 0.00905    0.993 
+    ## 16 Interdisciplinary                         9479 0.00243    0.999
+
+``` r
+# Plot as pie chart
+
+ggplot(women_by_category, aes(x = "", y = TotalWomen, fill = Major_category)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar(theta = "y") +
+  labs(
+    title = "Distribution of Women by Major Category",
+    x = NULL,
+    y = NULL,
+    fill = "Major Category"
+  ) +
+  theme_void() +
+  theme(legend.position = "right")
+```
+
+![](FINAL_files/figure-gfm/unnamed-chunk-3-4.png)<!-- -->
