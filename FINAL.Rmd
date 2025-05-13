@@ -213,4 +213,63 @@ ggplot(men_by_category, aes(x = "", y = TotalMen, fill = Major_category)) +
   theme_void() +
   theme(legend.position = "right")
 ```
+
+Which majors provide the best balance of employment rate and median salary?
+```{r}
+library(dplyr)
+library(ggplot2)
+
+# Load and prepare the data
+cm <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/college-majors/recent-grads.csv")
+
+# Create EmploymentRate column
+cm <- cm %>%
+  mutate(EmploymentRate = Employed / Total) %>%
+  filter(!is.na(EmploymentRate), !is.na(Median))
+
+# Rank by combined employment rate and median salary (simple sum for ranking)
+cm$Score <- scale(cm$EmploymentRate) + scale(cm$Median)
+
+top_10 <- cm %>%
+  arrange(desc(Score)) %>%
+  slice(1:10)
+
+# Bar plot
+ggplot(top_10, aes(x = reorder(Major, Median), y = Median, fill = Major_category)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "Top 10 Majors with Best Balance of Employment & Salary",
+    subtitle = "Ranked by combined employment rate and median salary",
+    x = "Major",
+    y = "Median Salary (USD)",
+    fill = "Major Category"
+  )
+
+ggplot(cm, aes(x = EmploymentRate, y = Median, color = Major_category)) +
+  geom_point(size = 2, alpha = 0.7) +
+  geom_hline(yintercept = mean(cm$Median, na.rm = TRUE), linetype = "dashed") +
+  labs(
+    title = "Employment Rate vs. Median Salary by Major",
+    x = "Employment Rate",
+    y = "Median Salary (USD)",
+    color = "Major Category"
+  )
+
+```
+
+This bar chart shows the ten college majors that offer the best mix of earning potential and job security. It ranks majors based on a combined score of median salary and employment rate, helping highlight which fields give you the best overall value. Unsurprisingly, engineering-related majors like Petroleum and Architectural Engineering top the list. The color coding breaks the majors into categories like Business, Engineering, or Arts, making it easy to see which areas tend to perform better. It’s a helpful chart for students thinking about what major can lead to both a good paycheck and a solid chance of getting hired.
+
+
+
+This scatter plot maps out how all college majors compare in terms of employment rate and salary. Each dot is a major, with salary on the vertical axis and employment rate on the horizontal. The dotted line shows the average salary overall, which makes it easy to spot which majors are above or below that line. The colors group majors into categories like Health, Business, Engineering, and so on. It’s a quick way to see which fields give you the best shot at a job, which pay the most, and which do both. Engineering majors, for example, usually land in the top-right — high pay and high employment.
+
+
+
+
 ##Conclusions
+
+
+
+
+
