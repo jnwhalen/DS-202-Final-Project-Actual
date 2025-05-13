@@ -69,6 +69,7 @@ library(ggplot2)
 ```
 
 ``` r
+#Cleaning
 cm <- cm %>%
   filter(!is.na(Total), Total > 0)
 
@@ -117,6 +118,20 @@ head(cm)
     ## 4       0.05012531
     ## 5       0.06109771
     ## 6       0.17722641
+
+\##Introduction
+
+Often time there are assumptions surrounding college majors. What majors
+pay better, what will get you a job, and what majors women tend to
+gravitate towards. Being college students, we see stereotypes and
+assumptions like this everywhere, but are any of them actually true?
+
+\##Data
+
+This is data from the fivethirtyeight package on github. It explores
+various college majors, their employment rates, average income, and
+percentage of graduates that are women. The data was taken from the
+American Community Survey in 2010-2012.
 
 ## Questions
 
@@ -193,6 +208,7 @@ Do major categories with higher percentages of women have higher
 employment rates?
 
 ``` r
+#Filter
 cm <- cm %>%
   filter(Total > 0) %>%
   mutate(
@@ -364,4 +380,4 @@ ggplot(men_by_category, aes(x = "", y = TotalMen, fill = Major_category)) +
   theme(legend.position = "right")
 ```
 
-![](FINAL_files/figure-gfm/unnamed-chunk-3-6.png)<!-- -->
+![](FINAL_files/figure-gfm/unnamed-chunk-3-6.png)<!-- --> \##Conclusions
