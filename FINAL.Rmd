@@ -268,7 +268,9 @@ This scatter plot maps out how all college majors compare in terms of employment
 
 
 ##Conclusions
+Conclusion 
 
+Choosing a college major is one of the most important decisions students make, and this project shows just how much that choice can affect future job prospects and earning potential. By analyzing employment rates and median salaries across a wide range of majors, we found that some fields — particularly in engineering and computer science — consistently offer both strong job security and higher pay. On the other hand, many majors in the arts and humanities tend to offer lower salaries and more limited job prospects, though they may still provide value in less measurable ways. Ultimately, while passion and interest should always play a role in selecting a major, having clear data on economic outcomes can help students make more informed and confident decisions about their education and career paths.
 
 
 
