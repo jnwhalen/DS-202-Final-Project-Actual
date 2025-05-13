@@ -61,6 +61,7 @@ category_summary <- cm %>%
   summarize(AvgFullTimeShare = mean(FullTimeShare, na.rm = TRUE)) %>%
   arrange(desc(AvgFullTimeShare))
 
+#Average Full time employment by major type
 ggplot(category_summary, aes(x = reorder(Major_category, AvgFullTimeShare), y = AvgFullTimeShare, fill = Major_category)) +
   geom_col() +
   coord_flip() +
@@ -71,6 +72,7 @@ ggplot(category_summary, aes(x = reorder(Major_category, AvgFullTimeShare), y = 
   ) +
   scale_y_continuous(labels = scales::percent_format())
 
+#Faceted by major
 ggplot(cm, aes(x = reorder(Major, FullTimeShare), y = FullTimeShare)) +
   geom_col(fill = "steelblue") +
   facet_wrap(~ Major_category, scales = "free_y") +
@@ -81,6 +83,7 @@ ggplot(cm, aes(x = reorder(Major, FullTimeShare), y = FullTimeShare)) +
   ) +
   scale_y_continuous(labels = scales::percent_format())
 
+#Major colored to major type
 ggplot(cm, aes(x = reorder(Major, FullTimeShare), y = FullTimeShare, color = Major_category)) +
   geom_col() +
   labs(
@@ -134,12 +137,23 @@ ggplot(cm, aes(x = ShareWomen, y = EmploymentRate)) +
   scale_y_continuous(labels = scales::percent_format()) +
   theme_minimal()
 
+#Women by Salary
 library(scales)
 
 ggplot(cm, aes(x = ShareWomen, y = Median, color = Major_category)) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm", se = FALSE, color = "red") +
   labs(title = "Median Salary vs Share of Women by Major", x = "Share of Women", y = "Median Salary") +
+  scale_x_continuous(labels = scales::percent_format()) + 
+  scale_y_continuous(labels = label_dollar(scale = 0.001, suffix = "K")) + 
+  theme(legend.position = "bottom")
+
+#Men by Salary
+
+ggplot(cm, aes(x = ShareMen, y = Median, color = Major_category)) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Median Salary vs Share of Men by Major", x = "Share of Men", y = "Median Salary") +
   scale_x_continuous(labels = scales::percent_format()) + 
   scale_y_continuous(labels = label_dollar(scale = 0.001, suffix = "K")) + 
   theme(legend.position = "bottom")
@@ -153,7 +167,7 @@ women_by_category <- cm %>%
   mutate(label_pos = cumsum(Percent) - Percent / 2)
 
 women_by_category
-# Plot as pie chart
+
 
 ggplot(women_by_category, aes(x = "", y = TotalWomen, fill = Major_category)) +
   geom_bar(stat = "identity", width = 1) +
@@ -167,4 +181,27 @@ ggplot(women_by_category, aes(x = "", y = TotalWomen, fill = Major_category)) +
   theme_void() +
   theme(legend.position = "right")
 
+
+#Male Pie Chart
+men_by_category <- cm %>%
+  group_by(Major_category) %>%
+  summarize(TotalMen = sum(Men, na.rm = TRUE)) %>%
+  mutate(Percent = TotalMen / sum(TotalMen)) %>%
+  arrange(desc(Percent)) %>%
+  mutate(label_pos = cumsum(Percent) - Percent / 2)
+
+men_by_category
+
+
+ggplot(men_by_category, aes(x = "", y = TotalMen, fill = Major_category)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar(theta = "y") +
+  labs(
+    title = "Distribution of Men by Major Category",
+    x = NULL,
+    y = NULL,
+    fill = "Major Category"
+  ) +
+  theme_void() +
+  theme(legend.position = "right")
 ```

@@ -146,6 +146,7 @@ category_summary <- cm %>%
   summarize(AvgFullTimeShare = mean(FullTimeShare, na.rm = TRUE)) %>%
   arrange(desc(AvgFullTimeShare))
 
+#Average Full time employment by major type
 ggplot(category_summary, aes(x = reorder(Major_category, AvgFullTimeShare), y = AvgFullTimeShare, fill = Major_category)) +
   geom_col() +
   coord_flip() +
@@ -160,6 +161,7 @@ ggplot(category_summary, aes(x = reorder(Major_category, AvgFullTimeShare), y = 
 ![](FINAL_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 ``` r
+#Faceted by major
 ggplot(cm, aes(x = reorder(Major, FullTimeShare), y = FullTimeShare)) +
   geom_col(fill = "steelblue") +
   facet_wrap(~ Major_category, scales = "free_y") +
@@ -174,6 +176,7 @@ ggplot(cm, aes(x = reorder(Major, FullTimeShare), y = FullTimeShare)) +
 ![](FINAL_files/figure-gfm/unnamed-chunk-2-2.png)<!-- -->
 
 ``` r
+#Major colored to major type
 ggplot(cm, aes(x = reorder(Major, FullTimeShare), y = FullTimeShare, color = Major_category)) +
   geom_col() +
   labs(
@@ -235,6 +238,7 @@ ggplot(cm, aes(x = ShareWomen, y = EmploymentRate)) +
 ![](FINAL_files/figure-gfm/unnamed-chunk-3-2.png)<!-- -->
 
 ``` r
+#Women by Salary
 library(scales)
 
 ggplot(cm, aes(x = ShareWomen, y = Median, color = Major_category)) +
@@ -249,6 +253,22 @@ ggplot(cm, aes(x = ShareWomen, y = Median, color = Major_category)) +
     ## `geom_smooth()` using formula = 'y ~ x'
 
 ![](FINAL_files/figure-gfm/unnamed-chunk-3-3.png)<!-- -->
+
+``` r
+#Men by Salary
+
+ggplot(cm, aes(x = ShareMen, y = Median, color = Major_category)) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Median Salary vs Share of Men by Major", x = "Share of Men", y = "Median Salary") +
+  scale_x_continuous(labels = scales::percent_format()) + 
+  scale_y_continuous(labels = label_dollar(scale = 0.001, suffix = "K")) + 
+  theme(legend.position = "bottom")
+```
+
+    ## `geom_smooth()` using formula = 'y ~ x'
+
+![](FINAL_files/figure-gfm/unnamed-chunk-3-4.png)<!-- -->
 
 ``` r
 #Pie Chart
@@ -283,8 +303,6 @@ women_by_category
     ## 16 Interdisciplinary                         9479 0.00243    0.999
 
 ``` r
-# Plot as pie chart
-
 ggplot(women_by_category, aes(x = "", y = TotalWomen, fill = Major_category)) +
   geom_bar(stat = "identity", width = 1) +
   coord_polar(theta = "y") +
@@ -298,4 +316,52 @@ ggplot(women_by_category, aes(x = "", y = TotalWomen, fill = Major_category)) +
   theme(legend.position = "right")
 ```
 
-![](FINAL_files/figure-gfm/unnamed-chunk-3-4.png)<!-- -->
+![](FINAL_files/figure-gfm/unnamed-chunk-3-5.png)<!-- -->
+
+``` r
+#Male Pie Chart
+men_by_category <- cm %>%
+  group_by(Major_category) %>%
+  summarize(TotalMen = sum(Men, na.rm = TRUE)) %>%
+  mutate(Percent = TotalMen / sum(TotalMen)) %>%
+  arrange(desc(Percent)) %>%
+  mutate(label_pos = cumsum(Percent) - Percent / 2)
+
+men_by_category
+```
+
+    ## # A tibble: 16 × 4
+    ##    Major_category                      TotalMen  Percent label_pos
+    ##    <chr>                                  <int>    <dbl>     <dbl>
+    ##  1 Business                              667852 0.232        0.116
+    ##  2 Engineering                           408307 0.142        0.303
+    ##  3 Humanities & Liberal Arts             272846 0.0949       0.422
+    ##  4 Social Science                        256834 0.0893       0.514
+    ##  5 Computers & Mathematics               208725 0.0726       0.595
+    ##  6 Biology & Life Science                184919 0.0643       0.663
+    ##  7 Arts                                  134390 0.0467       0.719
+    ##  8 Communications & Journalism           131921 0.0459       0.765
+    ##  9 Industrial Arts & Consumer Services   103657 0.0360       0.806
+    ## 10 Education                             103526 0.0360       0.842
+    ## 11 Psychology & Social Work               98115 0.0341       0.877
+    ## 12 Physical Sciences                      95390 0.0332       0.910
+    ## 13 Law & Public Policy                    91129 0.0317       0.943
+    ## 14 Health                                 75517 0.0263       0.972
+    ## 15 Agriculture & Natural Resources        40357 0.0140       0.992
+    ## 16 Interdisciplinary                       2817 0.000979     1.00
+
+``` r
+ggplot(men_by_category, aes(x = "", y = TotalMen, fill = Major_category)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar(theta = "y") +
+  labs(
+    title = "Distribution of Men by Major Category",
+    x = NULL,
+    y = NULL,
+    fill = "Major Category"
+  ) +
+  theme_void() +
+  theme(legend.position = "right")
+```
+
+![](FINAL_files/figure-gfm/unnamed-chunk-3-6.png)<!-- -->
