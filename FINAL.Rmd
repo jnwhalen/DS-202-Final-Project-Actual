@@ -39,7 +39,7 @@ head(cm)
 ```
 ##Introduction
 
-Often time there are assumptions surrounding college majors. What majors pay better, what will get you a job, and what majors women tend to gravitate towards. Being college students, we see stereotypes and assumptions like this everywhere, but are any of them actually true?
+Often time there are assumptions surrounding college majors. What majors pay better, what will get you a job, and what majors women tend to gravitate towards. Being college students, we see stereotypes and assumptions like this everywhere, but are any of them actually true? What major should you choose if you want to be paid well and have the most job security?
 
 ##Data
 
