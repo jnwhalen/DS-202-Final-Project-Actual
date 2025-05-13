@@ -456,15 +456,39 @@ way to see which fields give you the best shot at a job, which pay the
 most, and which do both. Engineering majors, for example, usually land
 in the top-right — high pay and high employment.
 
-\##Conclusions Conclusion
+\##Conclusions Conclusions
+
+1.  What major category has the highest percentage of full-time
+    employment after graduation?
+
+Our analysis found that engineering and health-related majors tend to
+have the highest share of full-time employment after graduation. These
+fields consistently lead to stable, full-time positions, likely due to
+strong demand and the technical skills associated with these majors.
+This suggests that students pursuing these degrees are more likely to
+secure reliable employment shortly after completing their studies.
+
+2.  Do major categories with higher percentages of women have higher
+    employment rates?
+
+We observed that majors with a higher proportion of women, such as
+education and social work, often have lower average employment rates
+compared to more male-dominated fields like engineering or computer
+science. This doesn’t imply causation, but it may reflect broader labor
+market dynamics, such as wage disparities or differences in industry
+demand. These findings highlight ongoing gender-related challenges in
+the workforce that are worth exploring further.
+
+3.  Which majors provide the best balance of employment rate and median
+    salary?
 
 Choosing a college major is one of the most important decisions students
-make, and this project shows just how much that choice can affect future
+make, and our analysis shows just how much that choice can affect future
 job prospects and earning potential. By analyzing employment rates and
 median salaries across a wide range of majors, we found that some fields
-— particularly in engineering and computer science — consistently offer
-both strong job security and higher pay. On the other hand, many majors
-in the arts and humanities tend to offer lower salaries and more limited
+particularly in engineering and computer science consistently offer both
+strong job security and higher pay. On the other hand, many majors in
+the arts and humanities tend to offer lower salaries and more limited
 job prospects, though they may still provide value in less measurable
 ways. Ultimately, while passion and interest should always play a role
 in selecting a major, having clear data on economic outcomes can help
