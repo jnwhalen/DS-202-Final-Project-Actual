@@ -125,6 +125,8 @@ Often time there are assumptions surrounding college majors. What majors
 pay better, what will get you a job, and what majors women tend to
 gravitate towards. Being college students, we see stereotypes and
 assumptions like this everywhere, but are any of them actually true?
+What major should you choose if you want to be paid well and have the
+most job security?
 
 \##Data
 
@@ -141,8 +143,8 @@ after graduation?
 Do major categories with higher percentages of women have higher
 employment rates?
 
-What type of engineering should I go into to be employed full time while
-also utilizing my college degree?
+Which majors provide the best balance of employment rate and median
+salary?
 
 ## Results
 
@@ -380,4 +382,91 @@ ggplot(men_by_category, aes(x = "", y = TotalMen, fill = Major_category)) +
   theme(legend.position = "right")
 ```
 
-![](FINAL_files/figure-gfm/unnamed-chunk-3-6.png)<!-- --> \##Conclusions
+![](FINAL_files/figure-gfm/unnamed-chunk-3-6.png)<!-- -->
+
+Which majors provide the best balance of employment rate and median
+salary?
+
+``` r
+library(dplyr)
+library(ggplot2)
+
+# Load and prepare the data
+cm <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/college-majors/recent-grads.csv")
+
+# Create EmploymentRate column
+cm <- cm %>%
+  mutate(EmploymentRate = Employed / Total) %>%
+  filter(!is.na(EmploymentRate), !is.na(Median))
+
+# Rank by combined employment rate and median salary (simple sum for ranking)
+cm$Score <- scale(cm$EmploymentRate) + scale(cm$Median)
+
+top_10 <- cm %>%
+  arrange(desc(Score)) %>%
+  slice(1:10)
+
+# Bar plot
+ggplot(top_10, aes(x = reorder(Major, Median), y = Median, fill = Major_category)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "Top 10 Majors with Best Balance of Employment & Salary",
+    subtitle = "Ranked by combined employment rate and median salary",
+    x = "Major",
+    y = "Median Salary (USD)",
+    fill = "Major Category"
+  )
+```
+
+![](FINAL_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+``` r
+ggplot(cm, aes(x = EmploymentRate, y = Median, color = Major_category)) +
+  geom_point(size = 2, alpha = 0.7) +
+  geom_hline(yintercept = mean(cm$Median, na.rm = TRUE), linetype = "dashed") +
+  labs(
+    title = "Employment Rate vs. Median Salary by Major",
+    x = "Employment Rate",
+    y = "Median Salary (USD)",
+    color = "Major Category"
+  )
+```
+
+![](FINAL_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->
+
+This bar chart shows the ten college majors that offer the best mix of
+earning potential and job security. It ranks majors based on a combined
+score of median salary and employment rate, helping highlight which
+fields give you the best overall value. Unsurprisingly,
+engineering-related majors like Petroleum and Architectural Engineering
+top the list. The color coding breaks the majors into categories like
+Business, Engineering, or Arts, making it easy to see which areas tend
+to perform better. It’s a helpful chart for students thinking about what
+major can lead to both a good paycheck and a solid chance of getting
+hired.
+
+This scatter plot maps out how all college majors compare in terms of
+employment rate and salary. Each dot is a major, with salary on the
+vertical axis and employment rate on the horizontal. The dotted line
+shows the average salary overall, which makes it easy to spot which
+majors are above or below that line. The colors group majors into
+categories like Health, Business, Engineering, and so on. It’s a quick
+way to see which fields give you the best shot at a job, which pay the
+most, and which do both. Engineering majors, for example, usually land
+in the top-right — high pay and high employment.
+
+\##Conclusions Conclusion
+
+Choosing a college major is one of the most important decisions students
+make, and this project shows just how much that choice can affect future
+job prospects and earning potential. By analyzing employment rates and
+median salaries across a wide range of majors, we found that some fields
+— particularly in engineering and computer science — consistently offer
+both strong job security and higher pay. On the other hand, many majors
+in the arts and humanities tend to offer lower salaries and more limited
+job prospects, though they may still provide value in less measurable
+ways. Ultimately, while passion and interest should always play a role
+in selecting a major, having clear data on economic outcomes can help
+students make more informed and confident decisions about their
+education and career paths.
